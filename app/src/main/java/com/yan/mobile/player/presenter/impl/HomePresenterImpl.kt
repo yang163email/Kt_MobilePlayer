@@ -1,85 +1,42 @@
 package com.yan.mobile.player.presenter.impl
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.yan.mobile.player.model.HomeItemBean
+import com.yan.mobile.player.net.HomeRequest
+import com.yan.mobile.player.net.ResponseHandler
 import com.yan.mobile.player.presenter.interf.HomePresenter
-import com.yan.mobile.player.utils.ThreadUtil
-import com.yan.mobile.player.utils.URLProviderUtils
 import com.yan.mobile.player.view.IHomeView
-import okhttp3.*
-import java.io.IOException
 
 /**
  *  @author      : 楠GG
  *  @date        : 2017/11/12 22:02
  *  @description ：HomePresenter实现类
  */
-class HomePresenterImpl(var homeView: IHomeView): HomePresenter {
+class HomePresenterImpl(private var homeView: IHomeView?): HomePresenter, ResponseHandler<List<HomeItemBean>> {
+
+    fun destroyView() {
+        if (homeView != null) homeView = null
+    }
+
+    override fun onSuccess(type: Int, result: List<HomeItemBean>) {
+        //区分初始化、加载更多
+        when (type) {
+            HomePresenter.TYPE_INIT_OR_REFRESH -> homeView?.loadSuccess(result)
+            HomePresenter.TYPE_LOAD_MORE -> homeView?.loadMore(result)
+        }
+    }
+
+    override fun onError(type: Int, msg: String?) {
+        homeView?.onError(msg)
+    }
+
     /**
      * 初始化数据、刷新数据
      */
     override fun loadData() {
-        val homeUrl = URLProviderUtils.getHomeUrl(0, 20)
-        val client = OkHttpClient()
-        val request = Request.Builder()
-                .url(homeUrl)
-                .get()
-                .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                ThreadUtil.runOnMainThread(Runnable {
-                    homeView.onError(e?.message)
-                })
-            }
-
-            override fun onResponse(call: Call?, response: Response?) {
-                val result = response?.body()?.string()
-
-                //使用gson解析数据
-                val gson = Gson()
-                val list = gson.fromJson<List<HomeItemBean>>(result,
-                        object : TypeToken<List<HomeItemBean>>() {}.type)
-
-                //主线程中更新数据
-                ThreadUtil.runOnMainThread(Runnable {
-                    homeView.loadSuccess(list)
-                })
-            }
-        })
+        HomeRequest(HomePresenter.TYPE_INIT_OR_REFRESH, 0, this).execute()
     }
 
     override fun loadMore(offset: Int) {
-        val homeUrl = URLProviderUtils.getHomeUrl(offset, 20)
-        val client = OkHttpClient()
-        val request = Request.Builder()
-                .url(homeUrl)
-                .get()
-                .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                ThreadUtil.runOnMainThread(Runnable {
-                    homeView.onError(e?.message)
-                })
-            }
-
-            override fun onResponse(call: Call?, response: Response?) {
-                val result = response?.body()?.string()
-
-                //使用gson解析数据
-                val gson = Gson()
-                val list = gson.fromJson<List<HomeItemBean>>(result,
-                        object : TypeToken<List<HomeItemBean>>() {}.type)
-
-                //主线程中更新数据
-                ThreadUtil.runOnMainThread(Runnable {
-                    homeView.loadMore(list)
-                })
-            }
-        })
+        HomeRequest(HomePresenter.TYPE_LOAD_MORE, offset, this).execute()
     }
-
-
 }

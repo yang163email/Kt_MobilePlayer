@@ -40,4 +40,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.2.4'
     //picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
+    //picasso-transformations
+    compile 'jp.wasabeef:picasso-transformations:2.1.2'
+    // If you want to use the GPU Filters
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 }

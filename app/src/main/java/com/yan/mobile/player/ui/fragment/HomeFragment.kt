@@ -10,7 +10,7 @@ import com.yan.mobile.player.base.BaseFragment
 import com.yan.mobile.player.model.HomeItemBean
 import com.yan.mobile.player.presenter.impl.HomePresenterImpl
 import com.yan.mobile.player.view.IHomeView
-import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_list.*
 
 /**
  *  @author      : 楠GG
@@ -24,7 +24,7 @@ class HomeFragment: BaseFragment(), IHomeView {
     private val mPresenter by lazy { HomePresenterImpl(this) }
 
     override fun initView(): View? {
-        return layoutInflater.inflate(R.layout.fragment_home, null)
+        return layoutInflater.inflate(R.layout.fragment_list, null)
     }
 
     override fun initListener() {

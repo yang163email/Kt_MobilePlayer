@@ -77,6 +77,7 @@ public class URLProviderUtils {
                 + "\"clid\":110025000}"
                 + "&offset=" + offset
                 + "&size=" + size;
+        Log.i("Main_url", url);
         return url;
     }
 
