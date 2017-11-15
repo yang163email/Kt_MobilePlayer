@@ -4,7 +4,8 @@ import com.yan.mobile.player.base.BaseListPresenter
 
 /**
  *  @author      : 楠GG
- *  @date        : 2017/11/12 22:01
- *  @description ：首页Fragment的抽象 p 层
+ *  @date        : 2017/11/14 18:02
+ *  @description : TODO
  */
-interface HomePresenter: BaseListPresenter
+interface MvListPresenter: BaseListPresenter {
+}

@@ -1,23 +1,41 @@
 package com.yan.mobile.player.ui.fragment
 
-import android.graphics.Color
-import android.view.Gravity
 import android.view.View
-import android.widget.TextView
+import com.itheima.player.model.bean.MvAreaBean
+import com.yan.mobile.player.R
+import com.yan.mobile.player.adapter.MvPagerAdapter
 import com.yan.mobile.player.base.BaseFragment
-import org.jetbrains.anko.textColor
+import com.yan.mobile.player.presenter.impl.MvPresenterImpl
+import com.yan.mobile.player.view.IMvView
+import kotlinx.android.synthetic.main.fragment_mv.*
 
 /**
  *  @author      : 楠GG
  *  @date        : 2017/11/11 16:59
- *  @description ：TODO
+ *  @description ：mv界面
  */
-class MvFragment : BaseFragment() {
+class MvFragment : BaseFragment(), IMvView {
+    private val mPresenter by lazy { MvPresenterImpl(this) }
+
     override fun initView(): View? {
-        val tv = TextView(context)
-        tv.gravity = Gravity.CENTER
-        tv.text = javaClass.simpleName
-        tv.textColor = Color.RED
-        return tv
+        return layoutInflater.inflate(R.layout.fragment_mv, null)
     }
+
+    override fun initListener() {
+
+    }
+
+    override fun initData() {
+        mPresenter.loadData()
+    }
+
+    override fun onError(msg: String?) {
+        myToast("加载数据事变")
+    }
+
+    override fun onSuccess(result: List<MvAreaBean>) {
+        view_pager.adapter = MvPagerAdapter(context, childFragmentManager, result)
+        tab_layout.setupWithViewPager(view_pager)
+    }
+
 }
