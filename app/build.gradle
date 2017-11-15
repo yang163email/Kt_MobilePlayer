@@ -8,7 +8,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.yan.mobile.player"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -44,4 +44,8 @@ dependencies {
     compile 'jp.wasabeef:picasso-transformations:2.1.2'
     // If you want to use the GPU Filters
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
+
+    implementation 'com.dou361.ijkplayer:jjdxm-ijkplayer:1.0.2'
+    //jiaozivideoplayer
+    compile 'cn.jzvd:jiaozivideoplayer:6.1.2'
 }

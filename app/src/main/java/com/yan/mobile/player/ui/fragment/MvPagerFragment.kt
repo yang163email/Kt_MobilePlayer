@@ -8,7 +8,7 @@ import com.yan.mobile.player.base.BaseListFragment
 import com.yan.mobile.player.base.BaseListPresenter
 import com.yan.mobile.player.model.VideoPlayerBean
 import com.yan.mobile.player.presenter.impl.MvListPresenterImpl
-import com.yan.mobile.player.ui.activity.VideoPlayerActivity
+import com.yan.mobile.player.ui.activity.JieCaoVideoPlayerActivity
 import com.yan.mobile.player.view.IMvListView
 import com.yan.mobile.player.widget.MvItemView
 import org.jetbrains.anko.support.v4.startActivity
@@ -28,7 +28,7 @@ class MvPagerFragment: BaseListFragment<MvPagerBean, VideosBean, MvItemView>(), 
         super.initListener()
         mAdapter.setListener {
             val videoPlayerBean = VideoPlayerBean(it.id, it.title, it.url)
-            startActivity<VideoPlayerActivity>("item" to videoPlayerBean)
+            startActivity<JieCaoVideoPlayerActivity>("item" to videoPlayerBean)
         }
     }
     override fun getAdapter(): BaseListAdapter<VideosBean, MvItemView> {

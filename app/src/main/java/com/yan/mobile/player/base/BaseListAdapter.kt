@@ -41,15 +41,15 @@ abstract class BaseListAdapter<IB, IV: View>: RecyclerView.Adapter<BaseListAdapt
         refreshItemView(itemView, data)
         //设置条目点击事件
         itemView.setOnClickListener {
-//            mListener.let {
+//            mListener?.let {
 //                it(data)
 //            }
             //invoke代表调用自身
-            mListener.invoke(data)
+            mListener?.invoke(data)
         }
     }
 
-    lateinit var mListener: (itemBean: IB) -> Unit
+    private var mListener: ((itemBean: IB) -> Unit)? = null
 
     fun setListener(listener: (itemBean: IB) -> Unit) {
         mListener = listener
