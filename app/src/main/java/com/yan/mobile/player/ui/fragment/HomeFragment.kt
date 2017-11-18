@@ -25,4 +25,9 @@ class HomeFragment: BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItemV
     override fun getList(response: List<HomeItemBean>?): List<HomeItemBean>? {
         return response
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mPresenter.destroyView()
+    }
 }

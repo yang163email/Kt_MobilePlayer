@@ -42,4 +42,9 @@ class MvPagerFragment: BaseListFragment<MvPagerBean, VideosBean, MvItemView>(), 
     override fun getList(response: MvPagerBean?): List<VideosBean>? {
         return response?.videos
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mPresenter.destroyView()
+    }
 }

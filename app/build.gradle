@@ -48,4 +48,6 @@ dependencies {
     implementation 'com.dou361.ijkplayer:jjdxm-ijkplayer:1.0.2'
     //jiaozivideoplayer
     compile 'cn.jzvd:jiaozivideoplayer:6.1.2'
+    //eventbus
+    compile 'org.greenrobot:eventbus:3.1.1'
 }

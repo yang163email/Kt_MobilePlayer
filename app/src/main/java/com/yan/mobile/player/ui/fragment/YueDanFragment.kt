@@ -25,4 +25,9 @@ class YueDanFragment: BaseListFragment<YueDanBean, YueDanBean.PlayListsBean, Yue
     override fun getList(response: YueDanBean?): List<YueDanBean.PlayListsBean>? {
         return response?.playLists
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mPresenter.destroyView()
+    }
 }
