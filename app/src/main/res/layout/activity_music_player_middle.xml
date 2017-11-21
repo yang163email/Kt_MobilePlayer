@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/animation_list"/>
 
-    <TextView
-        android:id="@+id/lyricView"
+    <com.yan.mobile.player.widget.LyricView
+        android:id="@+id/lyric_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>

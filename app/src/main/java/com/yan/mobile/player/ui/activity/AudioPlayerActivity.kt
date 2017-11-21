@@ -8,13 +8,17 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.view.View
+import android.widget.AdapterView
 import android.widget.SeekBar
 import com.yan.mobile.player.R
+import com.yan.mobile.player.adapter.PopAdapter
 import com.yan.mobile.player.base.BaseActivity
+import com.yan.mobile.player.enum.PlayMode
 import com.yan.mobile.player.model.AudioBean
 import com.yan.mobile.player.service.AudioService
 import com.yan.mobile.player.service.IService
 import com.yan.mobile.player.utils.StringUtil
+import com.yan.mobile.player.widget.PlayListPopupWindow
 import kotlinx.android.synthetic.main.activity_music_player_bottom.*
 import kotlinx.android.synthetic.main.activity_music_player_middle.*
 import kotlinx.android.synthetic.main.activity_music_player_top.*
@@ -28,7 +32,10 @@ import org.jetbrains.anko.image
  *  @date        : 2017/11/16 15:47
  *  @description : 音乐播放界面
  */
-class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener, AdapterView.OnItemClickListener {
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        iService?.playPosition(position)
+    }
 
     private val conn: AudioConnection by lazy { AudioConnection() }
     var iService: IService? = null
@@ -53,16 +60,20 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
         //注册eventbus
         EventBus.getDefault().register(this)
         val intent = intent.setClass(this, AudioService::class.java)
-        //先开启
-        startService(intent)
-        //绑定服务
+        //先绑定服务
         bindService(intent, conn, Context.BIND_AUTO_CREATE)
+        //再开启
+        startService(intent)
     }
 
     override fun initListener() {
         state.setOnClickListener(this)
         back.setOnClickListener(this)
         progress_sk.setOnSeekBarChangeListener(this)
+        mode.setOnClickListener(this)
+        pre.setOnClickListener(this)
+        next.setOnClickListener(this)
+        playlist.setOnClickListener(this)
     }
 
     /**
@@ -98,6 +109,49 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
         when (v?.id) {
             R.id.state -> updatePlayState()
             R.id.back -> finish()
+            R.id.mode -> updatePlayMode()
+            R.id.pre -> iService?.playPre()
+            R.id.next -> iService?.playNext()
+            R.id.playlist -> showPlayList()
+        }
+    }
+
+    /**
+     * 显示播放列表
+     */
+    private fun showPlayList() {
+        val list = iService?.getPlayList()
+        list?.let {
+            val adapter = PopAdapter(list)
+            val popupWindow = PlayListPopupWindow(this, adapter, this, window)
+            val yoff = audio_player_bottom.height
+            popupWindow.showAsDropDown(audio_player_bottom, 0, -yoff)
+        }
+    }
+
+    /**
+     * 更新播放模式
+     */
+    private fun updatePlayMode() {
+        //Service中更新
+        iService?.updatePlayMode()
+        //界面图片更新
+        updatePlayModeBtn()
+    }
+
+    /**
+     * 更新播放模式
+     */
+    private fun updatePlayModeBtn() {
+        iService?.let {
+            //获取播放模式
+            val playMode: PlayMode = it.getPlayMode()
+            val resId = when(playMode) {
+                PlayMode.MODE_ALL -> R.drawable.selector_btn_playmode_order
+                PlayMode.MODE_SINGLE -> R.drawable.selector_btn_playmode_single
+                PlayMode.MODE_RANDOM -> R.drawable.selector_btn_playmode_random
+            }
+            mode.setImageResource(resId)
         }
     }
 
@@ -115,9 +169,13 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
 
         //显示进度
         duration = iService?.getDuration()?:0
+        //设置歌词总进度
+        lyric_view.duration = duration
         progress_sk.max = duration
         //显示进度
         startUpdateProgress()
+        //显示播放模式图标
+        updatePlayModeBtn()
     }
 
     /**
@@ -128,7 +186,7 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
         //更新进度数据
         updateProgress(progress)
         //定时获取进度
-        handler.sendEmptyMessageDelayed(MSG_UPDATE_PROGRESS, 1000)
+        handler.sendEmptyMessageDelayed(MSG_UPDATE_PROGRESS, 1)
     }
 
     private fun updateProgress(pro: Int) {
@@ -136,6 +194,8 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
         val totalPro = StringUtil.parseProgress(duration)
         progress.text = currentPro + "/" + totalPro
         progress_sk.progress = pro
+        //更新歌词
+        lyric_view.updateProgress(pro)
     }
 
     /**
