@@ -171,6 +171,8 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
         duration = iService?.getDuration()?:0
         //设置歌词总进度
         lyric_view.duration = duration
+        //设置歌词
+        lyric_view.setSongName(audioBean.displayName)
         progress_sk.max = duration
         //显示进度
         startUpdateProgress()

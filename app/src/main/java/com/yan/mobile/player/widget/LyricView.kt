@@ -8,7 +8,10 @@ import android.util.AttributeSet
 import android.view.View
 import com.yan.mobile.player.R
 import com.yan.mobile.player.model.LyricBean
+import com.yan.mobile.player.utils.LyricLoader
+import com.yan.mobile.player.utils.LyricUtil
 import org.jetbrains.anko.collections.forEachWithIndex
+import org.jetbrains.anko.doAsync
 
 /**
  *  @author      : 楠GG
@@ -49,15 +52,19 @@ class LyricView: View {
         paint.textAlign = Paint.Align.CENTER
 
         //循环添加歌词bean
-        for (i in 0 until 30) {
-            list.add(LyricBean(2000* i, "正在播放第$i 行歌词"))
-        }
+//        for (i in 0 until 30) {
+//            list.add(LyricBean(2000* i, "正在播放第$i 行歌词"))
+//        }
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-//        drawSingleText(canvas)
-        drawMultiText(canvas)
+        if (list.isEmpty()) {
+            //数据还没有
+            drawSingleText(canvas)
+        } else {
+            drawMultiText(canvas)
+        }
     }
 
     /**
@@ -121,6 +128,7 @@ class LyricView: View {
      * 更新歌词播放进度
      */
     fun updateProgress(progress: Int) {
+        if (list.isEmpty()) return
         this.progress = progress
         if (progress >= list[list.size- 1].startTime) {
             //如果已经是最后一行
@@ -143,5 +151,17 @@ class LyricView: View {
         super.onSizeChanged(w, h, oldw, oldh)
         viewW = w
         viewH = h
+    }
+
+    /**
+     * 设置歌曲名
+     */
+    fun setSongName(displayName: String) {
+        doAsync {
+            //异步添加数据
+            val lyricFile = LyricLoader.loadLyricFile(displayName)
+            val lyricList = LyricUtil.parseLyric(lyricFile)
+            list.addAll(lyricList)
+        }
     }
 }
