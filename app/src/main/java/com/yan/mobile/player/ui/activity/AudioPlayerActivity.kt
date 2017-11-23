@@ -74,6 +74,13 @@ class AudioPlayerActivity: BaseActivity(), View.OnClickListener, SeekBar.OnSeekB
         pre.setOnClickListener(this)
         next.setOnClickListener(this)
         playlist.setOnClickListener(this)
+        lyric_view.setProgressListener {
+            //歌词进度更新
+            //更新播放进度
+            iService?.seekTo(it)
+            //进度显示更新
+            updateProgress(it)
+        }
     }
 
     /**
