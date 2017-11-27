@@ -28,6 +28,6 @@ class YueDanFragment: BaseListFragment<YueDanBean, YueDanBean.PlayListsBean, Yue
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mPresenter.destroyView()
+        mPresenter?.destroyView()
     }
 }

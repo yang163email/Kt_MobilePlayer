@@ -20,20 +20,21 @@ abstract class BaseListFragment<RP, IB, IV : View> : BaseFragment(), IBaseView<R
 
     protected val mAdapter by lazy { getAdapter() }
 
-    protected val mPresenter by lazy { getPresenter() }
+    protected var mPresenter: BaseListPresenter? = null
 
     override fun initView(): View? {
         return layoutInflater.inflate(R.layout.fragment_list, null)
     }
 
     override fun initListener() {
+        mPresenter = getPresenter()
         recyclerView.layoutManager = LinearLayoutManager(context)
         //适配adapter
         recyclerView.adapter = mAdapter
 
         refreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.BLACK)
         refreshLayout.setOnRefreshListener {
-            mPresenter.loadData()
+            mPresenter?.loadData()
         }
 
         recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
@@ -46,7 +47,7 @@ abstract class BaseListFragment<RP, IB, IV : View> : BaseFragment(), IBaseView<R
                         val lastPosition = layoutManager.findLastVisibleItemPosition()
                         if (lastPosition == mAdapter.itemCount - 1) {
                             //加载更多数据
-                            mPresenter.loadMore(mAdapter.itemCount - 1)
+                            mPresenter?.loadMore(mAdapter.itemCount - 1)
                         }
                     }
                 }
@@ -55,7 +56,7 @@ abstract class BaseListFragment<RP, IB, IV : View> : BaseFragment(), IBaseView<R
     }
 
     override fun initData() {
-        mPresenter.loadData()
+        mPresenter?.loadData()
     }
 
     override fun onError(message: String?) {
