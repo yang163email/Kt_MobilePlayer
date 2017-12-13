@@ -27,7 +27,14 @@ class HomeItemView: RelativeLayout {
         title.text = homeItemBean.title
         desc.text = homeItemBean.description
 
-        Picasso.with(context).load(homeItemBean.posterPic).into(bg)
+        val posterPic = getRealUrl(homeItemBean.posterPic)
+        Picasso.with(context).load(posterPic).into(bg)
+    }
+
+    private fun getRealUrl(posterPic: String?): String {
+        return if (posterPic == null) ""
+            else if ("http" in posterPic) posterPic
+            else "http:" + posterPic
     }
 
 }

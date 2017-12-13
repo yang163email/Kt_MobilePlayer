@@ -1,6 +1,5 @@
 package com.yan.mobile.player.ui.activity
 
-import android.content.pm.PackageManager
 import android.support.v7.widget.Toolbar
 import com.yan.mobile.player.R
 import com.yan.mobile.player.base.BaseActivity
